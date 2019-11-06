@@ -243,13 +243,7 @@ public abstract class Wrapper {
 
         try {
             Class<?> wc = cc.toClass();
-            /*Field mCtc = cc.getClass().getDeclaredField("mCtc");
-            mCtc.setAccessible(true);
-            CtClass ctClassObj = (CtClass) mCtc.get(cc);
-            byte[] byteArr = ctClassObj.toBytecode();
-            FileOutputStream fos = new FileOutputStream(new File("/Users/mengxin/Downloads/DemoService.class"));
-            fos.write(byteArr);
-            fos.close();*/
+            JavassistHelper.classPrint(cc, name);
 
             // setup static field.
             wc.getField("pts").set(null, pts);
@@ -259,32 +253,7 @@ public abstract class Wrapper {
             int ix = 0;
             for (Method m : ms.values())
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
-            /*Field[] declaredFields = wc.getDeclaredFields();
-            for (Field field : declaredFields){
-                field.setAccessible(true);
-                Object object = field.get(wc);
-                if (object instanceof String[]){
-                    String[] arr = (String[]) object;
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < arr.length; i++){
-                        sb.append(arr[i]);
-                        if (i != arr.length - 1)
-                            sb.append(",");
-                    }
-                    System.out.println(field.getName() + ": " + sb.toString());
-                } else if (object instanceof Class[]){
-                    Class[] arr = (Class[]) object;
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < arr.length; i++){
-                        sb.append(arr[i].getName());
-                        if (i != arr.length - 1)
-                            sb.append(",");
-                    }
-                    System.out.println(field.getName() + ": " + sb.toString());
-                } else {
-                    System.out.println(field.getName() + ": " + object);
-                }
-            }*/
+            JavassistHelper.fieldPrint(wc);
             return (Wrapper) wc.newInstance();
         } catch (RuntimeException e) {
             throw e;

@@ -226,9 +226,10 @@ public class DubboProtocol extends AbstractProtocol {
 
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
+        // dubbo://127.0.0.1:9010/com.alibaba.dubbo.rpc.protocol.dubbo.support.DemoService
         URL url = invoker.getUrl();
 
-        // export service.
+        // com.alibaba.dubbo.rpc.protocol.dubbo.support.DemoService:9010
         String key = serviceKey(url);
         DubboExporter<T> exporter = new DubboExporter<T>(invoker, key, exporterMap);
         exporterMap.put(key, exporter);
