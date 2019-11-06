@@ -493,6 +493,7 @@ public class RegistryProtocol implements Protocol {
 
         @Override
         public void unexport() {
+            // dubbo://127.0.0.1:9090/com.alibaba.dubbo.registry.RegistryService?callbacks=10000&connect.timeout=10000&interface=com.alibaba.dubbo.registry.RegistryService&lazy=true&methods=lookup,unsubscribe,subscribe,unregister,register&reconnect=false&sticky=true&subscribe.1.callback=true&timeout=10000&unsubscribe.1.callback=false
             Registry registry = RegistryProtocol.INSTANCE.getRegistry(originInvoker);
             try {
                 registry.unregister(registerUrl);

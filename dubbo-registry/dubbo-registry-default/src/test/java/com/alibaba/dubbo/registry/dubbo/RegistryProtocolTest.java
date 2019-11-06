@@ -77,12 +77,17 @@ public class RegistryProtocolTest {
 
     @Test
     public void testExport() {
+        // 注册这一个行为本身也是一种规约，也是属于协议
         RegistryProtocol registryProtocol = new RegistryProtocol();
-        registryProtocol.setCluster(new FailfastCluster());
-        registryProtocol.setRegistryFactory(ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension());
 
+        registryProtocol.setCluster(new FailfastCluster());
+        // 注册工厂自适应扩展
+        registryProtocol.setRegistryFactory(ExtensionLoader.getExtensionLoader(RegistryFactory.class).getAdaptiveExtension());
+        // dubbo协议
         Protocol dubboProtocol = DubboProtocol.getDubboProtocol();
         registryProtocol.setProtocol(dubboProtocol);
+        // registryUrl=registry://127.0.0.1:9090
+        // 拼接上export=dubbo://127.0.0.1:9453/com.alibaba.dubbo.registry.protocol.DemoService:1.0.0?notify=true&methods=test1,test2&side=con&side=consumer
         URL newRegistryUrl = registryUrl.addParameter(Constants.EXPORT_KEY, serviceUrl);
         DubboInvoker<DemoService> invoker = new DubboInvoker<DemoService>(DemoService.class,
                 newRegistryUrl, new ExchangeClient[]{new MockedClient("10.20.20.20", 2222, true)});

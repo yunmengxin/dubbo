@@ -18,16 +18,15 @@ package com.alibaba.dubbo.common.bytecode;
 
 import com.alibaba.dubbo.common.utils.ClassHelper;
 import com.alibaba.dubbo.common.utils.ReflectUtils;
+import javassist.CtClass;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
@@ -241,8 +240,17 @@ public abstract class Wrapper {
         cc.addMethod(c2.toString());
         cc.addMethod(c3.toString());
 
+
         try {
             Class<?> wc = cc.toClass();
+            /*Field mCtc = cc.getClass().getDeclaredField("mCtc");
+            mCtc.setAccessible(true);
+            CtClass ctClassObj = (CtClass) mCtc.get(cc);
+            byte[] byteArr = ctClassObj.toBytecode();
+            FileOutputStream fos = new FileOutputStream(new File("/Users/mengxin/Downloads/DemoService.class"));
+            fos.write(byteArr);
+            fos.close();*/
+
             // setup static field.
             wc.getField("pts").set(null, pts);
             wc.getField("pns").set(null, pts.keySet().toArray(new String[0]));
@@ -251,6 +259,32 @@ public abstract class Wrapper {
             int ix = 0;
             for (Method m : ms.values())
                 wc.getField("mts" + ix++).set(null, m.getParameterTypes());
+            /*Field[] declaredFields = wc.getDeclaredFields();
+            for (Field field : declaredFields){
+                field.setAccessible(true);
+                Object object = field.get(wc);
+                if (object instanceof String[]){
+                    String[] arr = (String[]) object;
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < arr.length; i++){
+                        sb.append(arr[i]);
+                        if (i != arr.length - 1)
+                            sb.append(",");
+                    }
+                    System.out.println(field.getName() + ": " + sb.toString());
+                } else if (object instanceof Class[]){
+                    Class[] arr = (Class[]) object;
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < arr.length; i++){
+                        sb.append(arr[i].getName());
+                        if (i != arr.length - 1)
+                            sb.append(",");
+                    }
+                    System.out.println(field.getName() + ": " + sb.toString());
+                } else {
+                    System.out.println(field.getName() + ": " + object);
+                }
+            }*/
             return (Wrapper) wc.newInstance();
         } catch (RuntimeException e) {
             throw e;
