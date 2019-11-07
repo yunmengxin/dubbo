@@ -18,10 +18,23 @@ public class JavassistHelper {
                 return;
             mCtc.setAccessible(true);
             CtClass ctClassObj = (CtClass) mCtc.get(cc);
-            ;
             byte[] byteArr = ctClassObj.toBytecode();
             FileOutputStream fos = new FileOutputStream(
-                    new File("/Users/mengxin/Downloads/"
+                    new File("/Users/mengxin/Downloads/classes/"
+                            + name
+                            + ".class")
+            );
+            fos.write(byteArr);
+            fos.close();
+        } catch (Exception ignore) {
+        }
+    }
+
+    public static void classPrint(CtClass cc, String name) {
+        try {
+            byte[] byteArr = cc.toBytecode();
+            FileOutputStream fos = new FileOutputStream(
+                    new File("/Users/mengxin/Downloads/classes/"
                             + name
                             + ".class")
             );
@@ -59,7 +72,7 @@ public class JavassistHelper {
                     System.out.println(field.getName() + ": " + object);
                 }
             }
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
 }

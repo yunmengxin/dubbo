@@ -45,6 +45,8 @@ public class ProtocolFilterWrapper implements Protocol {
 
     private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) {
         Invoker<T> last = invoker;
+        // export: EchoFilter, ClassLoaderFilter, GeneicFilter, ContextFilter, TraceFilter, TimeoutFilter, ExceptionFilter
+        // refer: ConsumerContextFilter, FutureFilter
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) {

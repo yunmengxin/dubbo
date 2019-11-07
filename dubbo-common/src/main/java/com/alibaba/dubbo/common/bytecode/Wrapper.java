@@ -18,10 +18,7 @@ package com.alibaba.dubbo.common.bytecode;
 
 import com.alibaba.dubbo.common.utils.ClassHelper;
 import com.alibaba.dubbo.common.utils.ReflectUtils;
-import javassist.CtClass;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -243,8 +240,6 @@ public abstract class Wrapper {
 
         try {
             Class<?> wc = cc.toClass();
-            JavassistHelper.classPrint(cc, name);
-
             // setup static field.
             wc.getField("pts").set(null, pts);
             wc.getField("pns").set(null, pts.keySet().toArray(new String[0]));

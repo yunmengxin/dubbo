@@ -182,6 +182,32 @@ public abstract class Proxy {
 
             // create ProxyInstance class.
             String pcn = pkg + ".proxy" + id;
+            // proxy0
+            /*
+                public class proxy0 implements DC, EchoService, DemoService {
+                    public static Method[] methods;
+                    private InvocationHandler handler;
+
+                    public Object invoke(String var1, String var2) throws Exception {
+                        Object[] var3 = new Object[]{var1, var2};
+                        Object var4 = this.handler.invoke(this, methods[0], var3);
+                        return (Object)var4;
+                    }
+
+                    public long add(int var1, long var2) {
+                        Object[] var4 = new Object[]{new Integer(var1), new Long(var2)};
+                        Object var5 = this.handler.invoke(this, methods[1], var4);
+                        return var5 == null ? (long)0 : (Long)var5;
+                    }
+
+                    public long timestamp() {
+                        Object[] var1 = new Object[0];
+                        Object var2 = this.handler.invoke(this, methods[3], var1);
+                        return var2 == null ? (long)0 : (Long)var2;
+                    }
+                    .......
+                }
+             */
             ccp.setClassName(pcn);
             ccp.addField("public static java.lang.reflect.Method[] methods;");
             ccp.addField("private " + InvocationHandler.class.getName() + " handler;");
@@ -197,8 +223,18 @@ public abstract class Proxy {
             ccm.addDefaultConstructor();
             ccm.setSuperClass(Proxy.class);
             ccm.addMethod("public Object newInstance(" + InvocationHandler.class.getName() + " h){ return new " + pcn + "($1); }");
-
             Class<?> pc = ccm.toClass();
+            // Proxy0
+            /*
+                public class Proxy0 extends Proxy implements DC {
+                    public Object newInstance(InvocationHandler var1) {
+                        return new proxy0(var1);
+                    }
+
+                    public Proxy0() {
+                    }
+                }
+             */
             proxy = (Proxy) pc.newInstance();
         } catch (RuntimeException e) {
             throw e;

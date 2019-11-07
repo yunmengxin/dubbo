@@ -252,7 +252,10 @@ public final class ClassGenerator {
     }
 
     public Class<?> toClass() {
-        return toClass(ClassHelper.getClassLoader(ClassGenerator.class), getClass().getProtectionDomain());
+        Class<?> aClass = toClass(ClassHelper.getClassLoader(ClassGenerator.class), getClass().getProtectionDomain());
+        JavassistHelper.classPrint(this, aClass.getName());
+        // this.mCtc.debugWriteFile("/Users/mengxin/Downloads");
+        return aClass;
     }
 
     public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) {

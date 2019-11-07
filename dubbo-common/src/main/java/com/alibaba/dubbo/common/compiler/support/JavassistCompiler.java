@@ -16,6 +16,7 @@
  */
 package com.alibaba.dubbo.common.compiler.support;
 
+import com.alibaba.dubbo.common.bytecode.JavassistHelper;
 import com.alibaba.dubbo.common.utils.ClassHelper;
 
 import javassist.ClassPool;
@@ -119,6 +120,7 @@ public class JavassistCompiler extends AbstractCompiler {
                 }
             }
         }
+        JavassistHelper.classPrint(cls, name);
         return cls.toClass(ClassHelper.getCallerClassLoader(getClass()), JavassistCompiler.class.getProtectionDomain());
     }
 

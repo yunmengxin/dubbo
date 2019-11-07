@@ -51,6 +51,7 @@ public class ProtocolListenerWrapper implements Protocol {
 
     @Override
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
+        // export: EchoFilter->ClassLoaderFilter->GeneicFilter->ContextFilter->TraceFilter->TimeoutFilter->ExceptionFilter->Wrapper0
         if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
             return protocol.export(invoker);
         }
