@@ -206,6 +206,11 @@ public abstract class Proxy {
                         return var2 == null ? (long)0 : (Long)var2;
                     }
                     .......
+                    public proxy0() {
+                    }
+                    public proxy0(InvocationHandler var1) {
+                        this.handler = var1;
+                    }
                 }
              */
             ccp.setClassName(pcn);
@@ -215,7 +220,7 @@ public abstract class Proxy {
             ccp.addDefaultConstructor();
             Class<?> clazz = ccp.toClass();
             clazz.getField("methods").set(null, methods.toArray(new Method[0]));
-
+            JavassistHelper.fieldPrint(clazz);
             // create Proxy class.
             String fcn = Proxy.class.getName() + id;
             ccm = ClassGenerator.newInstance(cl);
