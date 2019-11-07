@@ -34,7 +34,7 @@ import java.util.Collections;
  * ListenerProtocol
  */
 public class ProtocolListenerWrapper implements Protocol {
-
+    // DubboProtocol
     private final Protocol protocol;
 
     public ProtocolListenerWrapper(Protocol protocol) {
