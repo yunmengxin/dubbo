@@ -61,6 +61,7 @@ public class ProtocolFilterWrapper implements Protocol {
             //  |      --> nextInvoker.invoke()  --
             //  ----------------------------------|
             // 也就形成了上面的一个环，直到执行到AbstractProxyInvoker
+            // 以EchoFilter为例，检测调用的函数名是否$echo，如果是，以arg[0]为结果直接返回，不往下执行，也不会到达真实的暴露的服务执行
             for (int i = filters.size() - 1; i >= 0; i--) {
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
