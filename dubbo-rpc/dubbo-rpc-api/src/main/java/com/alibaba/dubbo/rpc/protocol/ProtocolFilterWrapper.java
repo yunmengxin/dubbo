@@ -114,6 +114,7 @@ public class ProtocolFilterWrapper implements Protocol {
         }
         // 在这里会形成一条Invoker链，链的尾部才是一个可以执行到具体实现类函数的Invoker，AbstractProxyInvoker的一个匿名实现类
         Invoker<T> invoker1 = buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER);
+        // 执行的是PtotocolListenerWrapper.export
         return protocol.export(invoker1);
     }
 
