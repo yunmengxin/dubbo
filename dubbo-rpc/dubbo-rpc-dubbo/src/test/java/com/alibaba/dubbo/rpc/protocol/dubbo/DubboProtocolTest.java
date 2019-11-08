@@ -20,6 +20,7 @@ package com.alibaba.dubbo.rpc.protocol.dubbo;
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
+import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Protocol;
 import com.alibaba.dubbo.rpc.ProxyFactory;
 import com.alibaba.dubbo.rpc.RpcException;
@@ -60,7 +61,14 @@ public class DubboProtocolTest {
     public void testDubboProtocol() throws Exception {
         DemoService service = new DemoServiceImpl();
         // 暴露服务
-        protocol.export(proxy.getInvoker(service, DemoService.class, URL.valueOf("dubbo://127.0.0.1:9010/" + DemoService.class.getName())));
+        // invoker是JavassistProxyFactory.getInvoker方法中AbstractProxyInvoker的一个匿名实现
+        // AbstractProxyInvoker的doInvoke方法是调用Wrapper的invokerMethod方法，Wrapper是适配所有类的所有方法的一个实现
+        // 通过Wrapper可以调用所有方法
+        Invoker<DemoService> invoker = proxy.getInvoker(service, DemoService.class, URL.valueOf("dubbo://127.0.0.1:9010/" + DemoService.class.getName()));
+        // protocol是Protocol接口的自适应扩展，默认Protocol采用的是dubbo的配置，也就是DubboProtocol，但是并不会采用DubboProtocol
+        // 因为包含有Wrapper适配类，当调用ExtensionLoader.getExtensionLoader(Protocol.class).getExtension("dubbo")时，返回的是ProtocolFilterWrapper
+        // 并且ProtocolFilterWrapper.protocol = ProtocolListenerWrapper，ProtocolListenerWrapper.protocol=DubboProtocol
+        protocol.export(invoker);
         // 引入服务
         service = proxy.getProxy(protocol.refer(DemoService.class, URL.valueOf("dubbo://127.0.0.1:9010/" + DemoService.class.getName())));
         assertEquals(service.enumlength(new Type[]{}), Type.Lower);

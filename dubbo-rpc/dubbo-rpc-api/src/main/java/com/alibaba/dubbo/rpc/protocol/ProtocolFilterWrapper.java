@@ -47,6 +47,8 @@ public class ProtocolFilterWrapper implements Protocol {
         Invoker<T> last = invoker;
         // export: EchoFilter, ClassLoaderFilter, GeneicFilter, ContextFilter, TraceFilter, TimeoutFilter, ExceptionFilter
         // refer: ConsumerContextFilter, FutureFilter
+        // 首先获取到Filter的自激活扩展，从末尾开始遍历，末尾的next连接上AbstractProxyInvoker，这条链的其他Invoker都只是一个Invoker接口的匿名实现类
+        // AbstractProxyInvoker包含有代理类Wrapper的引用和Url信息，是能够执行真正暴露出来的服务的函数
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
         if (!filters.isEmpty()) {
             for (int i = filters.size() - 1; i >= 0; i--) {
@@ -99,7 +101,9 @@ public class ProtocolFilterWrapper implements Protocol {
         if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
             return protocol.export(invoker);
         }
-        return protocol.export(buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER));
+        // 在这里会形成一条Invoker链，链的尾部才是一个可以执行到具体实现类函数的Invoker，AbstractProxyInvoker的一个匿名实现类
+        Invoker<T> invoker1 = buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER);
+        return protocol.export(invoker1);
     }
 
     @Override
