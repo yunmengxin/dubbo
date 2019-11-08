@@ -48,9 +48,19 @@ public class ProtocolFilterWrapper implements Protocol {
         // export: EchoFilter, ClassLoaderFilter, GeneicFilter, ContextFilter, TraceFilter, TimeoutFilter, ExceptionFilter
         // refer: ConsumerContextFilter, FutureFilter
         // 首先获取到Filter的自激活扩展，从末尾开始遍历，末尾的next连接上AbstractProxyInvoker，这条链的其他Invoker都只是一个Invoker接口的匿名实现类
-        // AbstractProxyInvoker包含有代理类Wrapper的引用和Url信息，是能够执行真正暴露出来的服务的函数
+        // AbstractProxyInvoker包含有代理类Wrapper的引用和Url信息，是能够执行真正暴露出来的服务的函数的Invoker
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
         if (!filters.isEmpty()) {
+            // 从末尾开始遍历，前一个filter构造出来的Invoker的invoke函数是filter.invoke(next,invocation)
+            // 而filter.invoke(next,invocation)函数，则是会根据情况判断是否到此就执行完成，如果还没符号条件，执行next invoker的invoke函数
+            // 而invoker的invoke还是会调用filter的invoke，通过这种方式形成一条链。
+            // 一个filter对应一个invoker，最后会返回最前面的filter的对应的invoker
+            //  |->invoker.invoke()
+            //  |    --> filter.invoke()
+            //  |      --> 如果条件满足，不再往下传invocation，返回结果
+            //  |      --> nextInvoker.invoke()  --
+            //  ----------------------------------|
+            // 也就形成了上面的一个环，直到执行到AbstractProxyInvoker
             for (int i = filters.size() - 1; i >= 0; i--) {
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
